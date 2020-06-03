@@ -55,6 +55,12 @@ public class LoginControler {
     @Value("${dingtalk.code_login.app_secret}")
     private String codeLoginAppSecret;
 
+    @Value("${dingtalk.code_login.access_token.app_key}")
+    private String accessTokenAppKey;
+
+    @Value("${dingtalk.code_login.access_token.app_secret}")
+    private String accessTokenAppSecret;
+
 
 
     @PostMapping("getTempCode")
@@ -135,7 +141,7 @@ public class LoginControler {
         OapiUserGetRequest request = new OapiUserGetRequest();
         request.setUserid(userId);
         request.setHttpMethod("GET");
-        String accessToken = getAccessToken(codeLoginAppId, codeLoginAppSecret);
+        String accessToken = getAccessToken();
 
         OapiUserGetResponse response = client.execute(request, accessToken);
 
@@ -153,7 +159,7 @@ public class LoginControler {
     private String getUserIdByUnionId(String unionid) throws Exception{
         //获取accessToken
 
-        String accessToken = getAccessToken(codeLoginAppId,codeLoginAppSecret);
+        String accessToken = getAccessToken();
 
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getUseridByUnionid");
         OapiUserGetUseridByUnionidRequest request = new OapiUserGetUseridByUnionidRequest();
@@ -169,39 +175,11 @@ public class LoginControler {
 
     /**
      * 第三方应用获取accessToken
-     * @param appId
-     * @param appSecret
      * @return
      * @throws Exception
      */
-    String getAccessToken(String appId,String appSecret) throws Exception{
-
-//        String url = "https://oapi.dingtalk.com/sns/gettoken?appid="
-//                +appId
-//                +"&appsecret="
-//                +appSecret;
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        Object response1 = restTemplate.getForObject(url, Object.class);
-//
-//        OapiGettokenResponse response = restTemplate.getForObject(url, OapiGettokenResponse.class);
-//        if(response1 != null){
-//            log.info("response1:::{}", JSON.toJSONString(response1));
-//        }
-//
-//
-//        if(response != null && response.getErrcode() != 0){
-//            throw new RuntimeException("errorCode:" + response.getErrcode() + ", errorMsg:" + response.getErrmsg());
-//        }
-//
-//        if(response == null){
-//            return null;
-//        }
-//
-//        return response.getAccessToken();
-
-        ServiceResult<String> acctokenRel = tokenService.getAccessToken("ding8w9ohpgr2eabfaei", "HEfZgMt38ueUOPBlE3-eYcFbJ4O4WSnmqFep70G6xGvPlxasLX6B3JXVT3OXJfc7");
-
+    String getAccessToken() throws Exception{
+        ServiceResult<String> acctokenRel = tokenService.getAccessToken(accessTokenAppKey, accessTokenAppSecret);
         return acctokenRel.getResult();
 
     }
